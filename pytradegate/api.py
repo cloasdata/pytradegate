@@ -108,7 +108,7 @@ class Instrument:
         self._url = "https://www.tradegate.de/refresh.php?isin=" + isin
         self._throttle = datetime.timedelta(seconds=throttle)
         self._last_query = datetime.datetime.min
-        self._data: dict = {}
+        self._data: dict[str,str] = {}
 
     @property
     def _refresh(self):
@@ -120,12 +120,19 @@ class Instrument:
     @property
     def ask(self) -> float:
         self._update()
-        return self._data.get("ask")
+        return self._ptofloat(self._data.get("ask"))
 
     @property
     def bid(self) -> float:
         self._update()
-        return self._data.get("bid")
+        return self._ptofloat(self._data.get("bid"))
+
+    @staticmethod
+    def _ptofloat(v) -> float:
+        if isinstance(v, str):
+            return float(v.replace(",", "."))
+        else:
+            return v
 
     @property
     def data(self) -> dict:
