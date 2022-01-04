@@ -6,7 +6,7 @@ with open("README.md") as f:
 
 setup(
     name='pytradegate',
-    version='0.11a',
+    version='0.20a',
     url="https://github.com/cloasdata/pyOnvista",
     license='MIT',
     license_files = ('LICENSE',),
