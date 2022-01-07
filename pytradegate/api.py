@@ -35,11 +35,11 @@ class Request:
         :return: tuple(response, status)
         """
         self._response = requests.get(
-                                url=url,
-                                headers=self._header.pop("headers", None),
-                                proxies=self._header.pop("proxies", None),
-                                timeout=self._header.pop("timeout", None)
-                                )
+            url=url,
+            headers=self._header.pop("headers", None),
+            proxies=self._header.pop("proxies", None),
+            timeout=self._header.pop("timeout", None)
+        )
         if self._response.status_code >= 400:
             raise requests.exceptions.HTTPError(self._response.status_code)
         else:
@@ -52,7 +52,8 @@ class CachedRequest(Request):
     it fires the http get
     The cache is highly recommended to avoid any abusing.
     """
-    def __init__(self, header: dict, path:str, validity: int ):
+
+    def __init__(self, header: dict, path: str, validity: int):
         super().__init__(header)
         self._validity = validity
         self._path = path
@@ -108,7 +109,7 @@ class Instrument:
         self._url = "https://www.tradegate.de/refresh.php?isin=" + isin
         self._throttle = datetime.timedelta(seconds=throttle)
         self._last_query = datetime.datetime.min
-        self._data: dict[str,str] = {}
+        self._data: dict[str, float] = {}
 
     @property
     def _refresh(self):
@@ -120,12 +121,12 @@ class Instrument:
     @property
     def ask(self) -> float:
         self._update()
-        return self._ptofloat(self._data.get("ask"))
+        return self._data.get("ask")
 
     @property
     def bid(self) -> float:
         self._update()
-        return self._ptofloat(self._data.get("bid"))
+        return self._data.get("bid")
 
     @staticmethod
     def _ptofloat(v) -> float:
@@ -144,4 +145,8 @@ class Instrument:
 
     def _get(self):
         self._last_query = datetime.datetime.now()
-        self._data = self._request(self._url).json()
+        resp = self._request(self._url)
+        json: dict[str, typing.Union[float, str]] = resp.json()
+        # sever responding sometimes with string instead of float
+        for k, v in json.items():
+            self._data[k] = self._ptofloat(v)

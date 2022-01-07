@@ -25,6 +25,10 @@ class TestAPI:
         assert isinstance(ask, float)
         assert ask > 0
 
+    def test_data_type(self, isin, request_obj):
+        inst = Instrument(isin, request_obj)
+        for v in inst.data.values():
+            assert isinstance(v, float)
 
     def test_throttle(self, isin, request_obj):
         # GIVEN
