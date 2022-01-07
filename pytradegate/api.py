@@ -150,3 +150,6 @@ class Instrument:
         # sever responding sometimes with string instead of float
         for k, v in json.items():
             self._data[k] = self._ptofloat(v)
+
+    def __repr__(self):
+        return f"Instrument(isin={self._isin}, request={self._request}, throttle={self._throttle})"
