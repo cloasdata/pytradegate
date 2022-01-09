@@ -1,5 +1,5 @@
 import pytest
-from pytradegate.api import Request, Instrument
+from src.pytradegate import Request, Instrument
 
 isins = ["DE0005439004", "DE0007664039"]
 
