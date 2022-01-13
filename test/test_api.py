@@ -1,18 +1,25 @@
 import pytest
-from src.pytradegate import Request, Instrument
+from src.pytradegate import Request, Instrument, CachedRequest
 
 isins = ["DE0005439004", "DE0007664039"]
+
 
 @pytest.fixture(params=isins)
 def isin(request):
     return request.param
 
+
 @pytest.fixture
-def request_obj():
+def req_header():
     user_agent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"
-    header = {'user-agent': user_agent}
-    r = Request(header=header)
+    return {'user-agent': user_agent}
+
+
+@pytest.fixture
+def request_obj(req_header):
+    r = Request(header=req_header)
     return r
+
 
 class TestAPI:
     def test_instrument(self, isin, request_obj):
@@ -40,8 +47,7 @@ class TestAPI:
         first_time = inst._last_query
         for _ in range(10):
             ask = inst.ask
-            #THEN ask should remain the same
+            # THEN ask should remain the same
             assert ask == inst.ask
             # timestamp should be the the same
             assert first_time == inst._last_query
-
