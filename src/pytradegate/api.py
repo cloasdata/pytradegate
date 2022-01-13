@@ -1,8 +1,7 @@
 import datetime
 import typing
 
-from ..pytradegate.request import Request, CachedRequest
-
+from .request import Request, CachedRequest
 
 class Instrument:
     def __init__(self, isin: str, request: typing.Union[Request, CachedRequest], throttle: int = 10):
