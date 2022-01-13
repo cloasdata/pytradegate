@@ -1,7 +1,7 @@
 import datetime
 import typing
 
-from src.pytradegate.request import Request, CachedRequest
+from ..pytradegate.request import Request, CachedRequest
 
 
 class Instrument:
