@@ -33,7 +33,10 @@ class Instrument:
     @staticmethod
     def _ptofloat(v) -> float:
         if isinstance(v, str):
-            return float(v.replace(",", "."))
+            try:
+                return float(v.replace(",", "."))
+            except ValueError as e:
+                raise ValueError("Did not receive correct type from from tradgegate", v) from e
         else:
             return v
 
