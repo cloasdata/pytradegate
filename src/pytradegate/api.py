@@ -3,6 +3,7 @@ import typing
 
 from .request import Request, CachedRequest
 
+
 class Instrument:
     def __init__(self, isin: str, request: typing.Union[Request, CachedRequest], throttle: int = 10):
         self._isin = isin
@@ -29,13 +30,12 @@ class Instrument:
         self._update()
         return self._data.get("bid")
 
-    @staticmethod
-    def _ptofloat(v) -> float:
+    def _ptofloat(self, v) -> float:
         if isinstance(v, str):
             try:
                 return float(v.replace(",", "."))
             except ValueError as e:
-                raise ValueError("Did not receive correct type from from tradgegate", v) from e
+                raise ValueError("Did not receive correct type from from tradgegate", v, self._data) from e
         else:
             return v
 
@@ -53,7 +53,10 @@ class Instrument:
         json: dict[str, typing.Union[float, str]] = resp.json()
         # sever responding sometimes with string instead of float
         for k, v in json.items():
-            self._data[k] = self._ptofloat(v)
+            if v != "./.":
+                self._data[k] = self._ptofloat(v)
+            else:
+                raise ValueError(f"Could not get any data for isin {self._isin}")
 
     def __repr__(self):
         return f"Instrument(isin={self._isin}, request={self._request}, throttle={self._throttle})"
